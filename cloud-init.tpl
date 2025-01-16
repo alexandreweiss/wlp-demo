@@ -26,6 +26,7 @@ write_files:
        bgp router-id 169.254.169.254
        no bgp ebgp-requires-policy
        network ${spoke_vnet_cidr}
+       network ${spoke_2_vnet_cidr}
        neighbor ${bgp_peer_1_ip} remote-as ${ars_asn}
        neighbor ${bgp_peer_1_ip} soft-reconfiguration inbound
        neighbor ${bgp_peer_1_ip} route-map ilb-nh out
@@ -34,12 +35,18 @@ write_files:
        neighbor ${bgp_peer_2_ip} route-map ilb-nh out
       !
       access-list 100 seq 5 permit ${spoke_vnet_cidr}
+      access-list 200 seq 5 permit ${spoke_2_vnet_cidr}
       !
       ip route ${spoke_vnet_cidr} 10.90.0.33
+      ip route ${spoke_2_vnet_cidr} 10.90.0.33
       !
       route-map ilb-nh permit 10
         match ip address 100
         set ip next-hop ${peer_ilb_ip_address}
+      !
+      route-map ilb-nh permit 20
+        match ip address 200
+        set ip next-hop ${peer_ilb_2_ip_address}
       !
        address-family ipv4 unicast
         exit-address-family
