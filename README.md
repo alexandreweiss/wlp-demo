@@ -13,7 +13,9 @@ This use case demonstrates how Aviatrix transit can live with Azure Route Server
 
 ## Potential designs
 
-### ARS dual-homed design with direct peering between existing hub and new transit to get valid next hop
+This design allows multiple hubs with 3P firewalls to exchange traffic with Aviatrix dataplane
+It allows for single transite / ars along with multiple hubs.
 
-spoke <--> fw-hub <--> ars-hub <--> Aviatrix transit
-              ^----------------------------^
+## Caveats
+- Prod to Dev would need direct peering to communicate (or maybe deeper investigation)
+- Routing between different regions would require some static route announcement on BGPoLAN to ARS as, in the case of multiple ARS, we would have duplicate 65515 ASN thus being rejected by each other (loop prevention mechanism)
